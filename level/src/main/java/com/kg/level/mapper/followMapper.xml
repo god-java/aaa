@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kg.level.dao.FollowDAO">
+	<insert id="clickFollow">
+		insert into level_follow values(#{follower_num}, #{followee_num})
+	</insert>
+	 <select id="followerList" parameterType="Object" resultType="com.kg.level.dto.FollowDTO">
+		select * from level_follow where follower_num=#{member_num}
+	</select>
+	<select id="followeeList" parameterType="Object" resultType="com.kg.level.dto.FollowDTO">
+		select * from level_follow where followee_num=#{member_num}
+	</select>
+	<delete id="clickUnFollow">
+		delete from level_follow where follower_num=#{follower_num} and followee_num=#{followee_num}
+	</delete>
+	<select id="followQtt" parameterType="Object" resultType="int">
+		select count(*) from level_follow where followee_num=#{member_num}
+	</select>
+	<select id="followingQtt" parameterType="Object" resultType="int">
+		select count(*) from level_follow where follower_num=#{member_num}
+	</select>
+	<select id="followingList" parameterType="int" resultType="com.kg.level.dto.ObjectDTO">
+		select * from level_member lm join level_follow lf on lm.member_num=lf.followee_num where lf.follower_num=#{member_num}
+	</select>
+	<select id="follower_List" parameterType="int" resultType="com.kg.level.dto.ObjectDTO">
+		select * from level_member lm join level_follow lf on lm.member_num=lf.follower_num where lf.followee_num=#{member_num}
+	</select>
+	<select id="search_followee" parameterType="MemberDTO" resultType="MemberDTO">
+		select A.* from (select * from level_member where member_num in(select followee_num from level_follow where follower_num=#{member_num}))A where nickname like #{nickName} or name like #{name}
+	</select>
+</mapper>

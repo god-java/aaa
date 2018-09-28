@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kg.level.dao.ChattingDAO">
+	<select id="chattingContent" parameterType="map" resultType="com.kg.level.dto.ChattingDTO">
+		select chatting_content, chatting_sender_num, send_date from level_chatting where (member1_num=#{member1_num} and member2_num=#{member2_num}) or (member1_num=#{member2_num} and member2_num=#{member1_num})
+	</select>
+	<insert id="chatWrite" parameterType="com.kg.level.dto.ChattingDTO">
+		insert into level_chatting values(level_chatting_seq.nextval, #{member1_num}, #{member2_num}, #{chatting_sender_num},#{chatting_content}, default)
+	</insert>
+</mapper>

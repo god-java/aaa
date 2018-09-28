@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kg.level.dao.NoteDAO">
+	<insert id="note_reply" parameterType="com.kg.level.dto.NoteDTO">
+		insert into level_note values(level_note_seq.nextval, #{sender_num}, #{receiver_num}, #{note_content}, default, default, default, default)
+	</insert>
+	<select id="note_list" parameterType="int" resultType="com.kg.level.dto.ObjectDTO">
+		select * from level_note nt join level_member mb on nt.sender_num=mb.member_num where nt.receiver_num=#{member_num} order by note_num desc
+	</select>
+	<select id="note_info" parameterType="int" resultType="com.kg.level.dto.ObjectDTO">
+		select * from level_note nt join level_member mb on nt.sender_num = mb.member_num where note_num=#{note_num}
+	</select>
+	<update id="read_check" parameterType="int">
+		update level_note set read_check='read' where note_num=#{note_num}
+	</update>
+	<select id="read_check_count" parameterType="int" resultType="int">
+		select count(*) from level_note where read_check='x' and receiver_num=#{member_num}
+	</select>
+	<select id="send_note_list" parameterType="int" resultType="com.kg.level.dto.ObjectDTO">
+		select * from level_note ln join level_member mb on ln.sender_num=mb.member_num where ln.sender_num = #{member_num} order by note_num desc
+	</select>
+	<select id="send_note_count" parameterType="int" resultType="int">
+		select count(*) from level_note nt join level_member mb on nt.sender_num = mb.member_num where nt.sender_num = #{member_num} and nt.sender_delete='x'
+	</select>
+	<select id="send_note_list_row" parameterType="map" resultType="com.kg.level.dto.ObjectDTO">
+		select * from(select A.*, rownum rnum from(select * from level_note ln join level_member mb on ln.sender_num=mb.member_num where ln.sender_num = #{member_num} and ln.sender_delete='x' order by note_num desc)A) where rnum between #{startRow} and #{endRow}
+	</select>
+	<update id="send_note_delete" parameterType="int">
+		update level_note set sender_delete='o' where note_num = #{note_num}
+	</update>
+	<update id="all_delete_send_note" parameterType="int">
+		update level_note set sender_delete='o' where sender_num = #{sender_num}
+	</update>
+	<select id="note_sender_receiver_delete" parameterType="int" resultType="com.kg.level.dto.NoteDTO">
+		select sender_delete, receiver_delete from level_note where note_num=#{note_num}
+	</select>
+	<delete id="note_delete" parameterType="int">
+		delete from level_note where note_num=#{note_num}
+	</delete>
+</mapper>

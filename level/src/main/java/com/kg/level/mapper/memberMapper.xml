@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kg.level.dao.MemberDAO">
+	
+	<insert id="join" parameterType="MemberDTO">
+		insert into level_member values(level_member_seq.nextval,#{name},#{email},#{nickName},#{password},default,#{phone1},#{phone2},#{phone3},default,default,default,default,null)
+	</insert>
+	<select id="overlap" parameterType="String" resultType="int">
+		select count(*) from level_member where email=#{email}
+	</select>
+	<select id="loginCheckId" parameterType="MemberDTO" resultType="int">
+		select count(*) from level_member where email=#{email}
+	</select>
+	<select id="loginCheckFinal" parameterType="MemberDTO" resultType="int">
+		select count(*) from level_member where email=#{email} and password=#{password}
+	</select>
+	<select id="member_num" parameterType="MemberDTO" resultType="int">
+		select member_num from level_member where email=#{email} and password=#{password}
+	</select>
+	<update id="profile_img_update" parameterType="map">
+		update level_member set profile_img=#{file_name} where member_num=#{member_num} 
+	</update>
+	<select id="myInfo" parameterType="Object" resultType="MemberDTO">
+		select * from level_member where member_num=#{member_num}
+	</select>
+	<select id="memberInfo" parameterType="int" resultType="MemberDTO">
+		select * from level_member where member_num=#{member_num}
+	</select>
+	<select id="memberSearch" parameterType="String" resultType="MemberDTO">
+		select * from level_member where nickName like #{nickName}
+	</select>
+	<update id="newsUpdate" parameterType="int">
+		update level_member set news=news+1 where member_num=#{receiver_num}
+	</update>
+	<select id="findMember_keyUp" parameterType="MemberDTO" resultType="MemberDTO">
+	select * from level_member where nickName like #{nickName} or email like #{email}
+	</select>
+	<update id="access_status_on" parameterType="int">
+		update level_member set access_status='login' where member_num=#{member_num}
+	</update>
+	<update id="access_status_off" parameterType="int">
+		update level_member set access_status='logout' where member_num=#{member_num}
+	</update>
+	<select id="member_access_list" parameterType="int" resultType="MemberDTO">
+		select m.profile_img, m.nickName, m.name, m.member_num, m.access_status from level_follow f join level_member m on f.followee_num=m.member_num where f.follower_num=#{member_num}
+	</select>
+<select id="findOk_email1" parameterType="MemberDTO" resultType="MemberDTO">
+		select * from level_member where nickName = #{nickName} and phone1 = #{phone1} and phone2 = #{phone2} and phone3 = #{phone3} and name = #{name}
+	</select>
+	<select id="findOk_email2" parameterType="MemberDTO" resultType="int">
+		select count(*) from level_member where nickName = #{nickName} and phone1 = #{phone1} and phone2 = #{phone2} and phone3 = #{phone3} and name = #{name}
+	</select>
+	<select id="findOk_password1" parameterType="MemberDTO" resultType="MemberDTO">
+		select * from level_member where email = #{email} and name = #{name} and nickName = #{nickName} and phone1 = #{phone1} and phone2 = #{phone2} and phone3 = #{phone3}
+	</select>
+	<select id="findOk_password2" parameterType="MemberDTO" resultType="int">
+		select count(*) from level_member where email = #{email} and name = #{name} and nickName = #{nickName} and phone1 = #{phone1} and phone2 = #{phone2} and phone3 = #{phone3}
+	</select>
+	<update id="modify_password" parameterType="MemberDTO">
+		update level_member set password = #{password} where email = #{email}
+	</update>
+	<update id="modify_member" parameterType="MemberDTO">
+		update level_member set name = #{name}, introduce = #{introduce}, phone1 = #{phone1}, phone2 = #{phone2}, phone3 = #{phone3} where member_num = #{member_num}
+ 	</update>
+ 	<select id="delete_Ok_password" parameterType="MemberDTO" resultType="int">
+		select count(*) from level_member where member_num = #{member_num} and password = #{password}
+	</select>
+ 	<update id="delete_code" parameterType="MemberDTO">
+		update level_member set leave_code = #{leave_code} where member_num = #{member_num}
+	</update>
+	<select id="delete_Ok_code" parameterType="MemberDTO" resultType="int">
+		select count(*) from level_member where member_num = #{member_num} and leave_code = #{leave_code}
+	</select>
+	<delete id="delete_Ok" parameterType="MemberDTO">
+		delete from level_member where member_num = #{member_num}
+	</delete>
+	<update id="modify_password_main" parameterType="MemberDTO">
+		update level_member set password = #{password} where member_num = #{member_num}
+	</update>
+	<select id="email_find" parameterType="MemberDTO" resultType="String">
+		select email from level_member where member_num = #{member_num} 
+	</select>
+	
+	<select id="password_find" parameterType="MemberDTO" resultType="String">
+		select password from level_member where member_num = #{member_num}
+	</select>
+	<update id="modify_password_main2" parameterType="MemberDTO">
+		update level_member set password = #{password} where member_num = #{member_num}
+	</update>
+	<select id="member_profile" parameterType="int" resultType="MemberDTO">
+		select profile_img,nickname from level_member where member_num=#{param1}
+	</select>
+</mapper>

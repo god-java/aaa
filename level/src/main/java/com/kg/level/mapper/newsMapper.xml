@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kg.level.dao.NewsDAO">
+	<insert id="sendNews" parameterType="com.kg.level.dto.NewsDTO">
+		insert into level_news values(level_news_seq.nextval,#{sender_num},#{receiver_num},#{type},#{history_num},default)
+	</insert>
+	<select id="newsList" parameterType="int" resultType="com.kg.level.dto.ObjectDTO">
+	select sender_num, news_date, type, history_num from level_news where receiver_num=#{member_num} order by news_num desc
+		<!-- select n.sender_num, n.type, n.history_num, m.nickname, m.profile_img from level_news n join level_member m on n.receiver_num=m.member_num where n.receiver_num=#{member_num} order by news_num desc -->
+	</select>
+	<!--  <select id="findSender" parameterType="int" resultType="com.kg.level.dto.MemberDTO">
+		select nickname, profile_img from level_member where member_num in (select sender_num from level_news where receiver_num=#{receiver_num} order by news_num desc)
+	</select>  -->
+	<select id="findSender" parameterType="int" resultType="com.kg.level.dto.MemberDTO">
+		select nickname, profile_img  from level_member where member_num=#{param1}
+	</select>
+</mapper>

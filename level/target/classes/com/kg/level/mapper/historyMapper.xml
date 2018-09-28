@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kg.level.dao.HistoryDAO">
+	<insert id="historyWrite" parameterType="com.kg.level.dto.HistoryDTO">
+		insert into level_history values(level_history_seq.nextval,#{member_num},#{history_content},#{file_name},default,default,#{history_addr},#{x_pos},#{y_pos},null,null)
+	</insert>
+	<select id="historyList" parameterType="map" resultType="com.kg.level.dto.ObjectDTO">
+		select * from(select A.*, rownum rnum from(select * from level_history ht join level_member mb on ht.member_num=mb.member_num where ht.member_num in(select followee_num from level_follow where follower_num=#{member_num} or followee_num=#{member_num})order by ht.write_date desc)A) where rnum between #{start_row} and #{end_row}
+	</select>
+	<select id="memberHistory" parameterType="Object" resultType="com.kg.level.dto.ObjectDTO">
+		select * from level_history where member_num=#{member_num} order by history_num desc	
+	</select>
+	<select id="historyView" resultType="com.kg.level.dto.ObjectDTO">
+		select * from level_history ht join level_member mb on ht.member_num=mb.member_num where ht.history_num=#{history_num}
+	</select>
+	<select id="historyQtt" parameterType="Object" resultType="int">
+		select count(*) from level_history where member_num=#{member_num}
+	</select>
+	<select id="allHistory" parameterType="map">
+		select * from(select A.*, rownum rnum from(select * from level_history ht join level_member mb on ht.member_num=mb.member_num where ht.member_num in(select followee_num from level_follow where follower_num=41))A) where rnum between #{start_row} and #{end_row}
+	</select>
+	<update id="up_like_count" parameterType="int">
+		update level_history set like_count = like_count + 1 where history_num = #{history_num}
+	</update>
+	<update id="down_like_count" parameterType="int">
+		update level_history set like_count = like_count - 1 where history_num = #{history_num}
+	</update>
+	<select id="best3_history" resultType="com.kg.level.dto.ObjectDTO">
+		select * from(select A.*, rownum rnum from(select * from level_history ht join level_member mb on  ht.member_num=mb.member_num where write_date>to_char(sysdate-7, 'yyyy-mm-dd hh24:mi') order by like_count desc)A) where rnum between 1 and 3
+	</select>
+	<select id="history_delete" parameterType="int">
+		delete from level_history where history_num=#{history_num}
+	</select>
+	
+	<!-- share -->
+	<insert id="historyShare" parameterType="com.kg.level.dto.HistoryDTO">
+		insert into level_history values(level_history_seq.nextval, #{member_num}, #{history_content}, null, default, default, null, null, null, #{share_member_num}, #{share_history_num})
+	</insert>
+	<select id="shareHistory" parameterType="int" resultType="com.kg.level.dto.ObjectDTO">
+		select * from level_history where history_num = #{share_history_num}
+	</select>
+	<select id="historyView_share" resultType="com.kg.level.dto.ObjectDTO">
+		select ht.file_name, ht.write_date, ht.history_addr, ht.x_pos, ht.y_pos, ht.member_num, ht.history_content, mb.nickName, mb.profile_img from level_history ht join level_member mb on ht.member_num=mb.member_num where ht.history_num=#{share_history_num}
+	</select>
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kg.level.dao.CommentDAO">
+	<insert id="commentWriteOk" parameterType="com.kg.level.dto.CommentDTO">
+		insert into level_comment values(level_comment_seq.nextval, #{member_num}, #{history_num}, #{comment_content}, default, default, default, default, default)		
+	</insert>
+	<select id="commentList" parameterType="int" resultType="com.kg.level.dto.ObjectDTO">
+		select m.member_num, m.profile_img, m.email, m.nickName, c.comment_content from level_comment c join level_member m on c.member_num=m.member_num where history_num=#{history_num} order by comment_num desc
+	</select>
+	<select id="allCommentList" parameterType="int" resultType="com.kg.level.dto.ObjectDTO">
+		select m.member_num, m.profile_img, m.email, m.nickName, c.history_num, c.comment_content from level_comment c join level_member m on c.member_num=m.member_num order by comment_num desc
+	</select>
+	<update id="update_overlapCount" parameterType="com.kg.level.dto.CommentDTO">
+		update level_comment set overlap_count=#{overlap_count} where comment_num = (#{comment_num})
+	</update>
+	<select id="overlap_count" resultType="int">
+		select overlap_count from level_comment order by comment_date desc
+	</select>
+	<select id="max_comment_num" resultType="int">
+		select max(comment_num) from level_comment
+	</select>
+</mapper>
